@@ -9,7 +9,7 @@ import { COLORS } from '../constants/Colors';
 import { STYLES } from '../constants/Styles';
 
 function Tile(): React.JSX.Element {
-  [playerSelected, setPlayerSelected] = useState(0);
+  const [playerSelected, setPlayerSelected] = useState(0);
 
   const backgroundStyle = {
     backgroundColor: playerSelected === 1 ? COLORS.boldRed

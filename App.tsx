@@ -10,12 +10,12 @@ import {
 } from 'react-native';
 
 import { STYLES } from './constants/Styles';
-import Tile from './components/Tile';
+import Board from './components/Board';
 
 function App(): React.JSX.Element {
   return (
     <SafeAreaView style={STYLES.safeArea}>
-      <Tile />
+      <Board />
     </SafeAreaView>
   );
 }
