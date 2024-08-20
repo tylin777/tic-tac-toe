@@ -6,27 +6,40 @@ import {
 } from 'react-native';
 
 import { COLORS } from '../constants/Colors';
+import { PLAYER_ONE, PLAYER_TWO } from '../constants/Constants';
 import { STYLES } from '../constants/Styles';
+import { TileCoordinate } from '../models/TileCoordinate';
 
-function Tile(): React.JSX.Element {
+type TileProps = {
+  coordinate: TileCoordinate,
+  onTileSelected: (coordinate: TileCoordinate) => void,
+  currentPlayer: integer,
+}
+
+function Tile({ coordinate, onTileSelected, currentPlayer} : TileProps): React.JSX.Element {
   const [playerSelected, setPlayerSelected] = useState(0);
 
   const backgroundStyle = {
-    backgroundColor: playerSelected === 1 ? COLORS.boldRed
-      : playerSelected === -1 ? COLORS.boldBlue
+    backgroundColor: playerSelected === PLAYER_ONE ? COLORS.boldRed
+      : playerSelected === PLAYER_TWO ? COLORS.boldBlue
       : COLORS.boldGrey,
   };
 
   const onTilePressed = () => {
-    setPlayerSelected(1);
+    console.log("TYLOG: player " + (currentPlayer === PLAYER_ONE ? 1 : 2) + " has selected tile coordinate: [" + coordinate.row + ", " + coordinate.column + "]");
+
+    if (playerSelected === 0) {
+      setPlayerSelected(currentPlayer);
+      onTileSelected(coordinate);
+    }
   };
 
   return (
     <TouchableNativeFeedback onPress={onTilePressed}>
       <View style={[STYLES.tile, backgroundStyle]}>
         <Text style={STYLES.text}>
-          {playerSelected === 1 ? 'x'
-            : playerSelected === -1 ? 'o'
+          {playerSelected === PLAYER_ONE ? 'x'
+            : playerSelected === PLAYER_TWO ? 'o'
             : ''}
           </Text>
       </View>
