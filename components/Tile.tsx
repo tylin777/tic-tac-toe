@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Text,
   TouchableNativeFeedback,
@@ -6,40 +6,36 @@ import {
 } from 'react-native';
 
 import { COLORS } from '../constants/Colors';
-import { PLAYER_ONE, PLAYER_TWO } from '../constants/Constants';
+import { PLAYER_ONE, PLAYER_TWO, UNSELECTED } from '../constants/Constants';
 import { STYLES } from '../constants/Styles';
 import { TileCoordinate } from '../models/TileCoordinate';
 
 type TileProps = {
   coordinate: TileCoordinate,
+  rowMap: Map<number, Map<number, number[]>>,
   onTileSelected: (coordinate: TileCoordinate) => void,
-  currentPlayer: integer,
 }
 
-function Tile({ coordinate, onTileSelected, currentPlayer} : TileProps): React.JSX.Element {
-  const [playerSelected, setPlayerSelected] = useState(0);
+function Tile({ coordinate, rowMap, onTileSelected } : TileProps): React.JSX.Element {
+  let selectedByPlayer = UNSELECTED;
+  if (rowMap.has(coordinate.row)) {
+    if ((rowMap.get(coordinate.row)).has(coordinate.column)) {
+      selectedByPlayer = (rowMap.get(coordinate.row)).get(coordinate.column);
+    }
+  }
 
   const backgroundStyle = {
-    backgroundColor: playerSelected === PLAYER_ONE ? COLORS.boldRed
-      : playerSelected === PLAYER_TWO ? COLORS.boldBlue
+    backgroundColor: selectedByPlayer === PLAYER_ONE ? COLORS.boldRed
+      : selectedByPlayer === PLAYER_TWO ? COLORS.boldBlue
       : COLORS.boldGrey,
   };
 
-  const onTilePressed = () => {
-    console.log("TYLOG: player " + (currentPlayer === PLAYER_ONE ? 1 : 2) + " has selected tile coordinate: [" + coordinate.row + ", " + coordinate.column + "]");
-
-    if (playerSelected === 0) {
-      setPlayerSelected(currentPlayer);
-      onTileSelected(coordinate);
-    }
-  };
-
   return (
-    <TouchableNativeFeedback onPress={onTilePressed}>
+    <TouchableNativeFeedback onPress={() => onTileSelected(coordinate)}>
       <View style={[STYLES.tile, backgroundStyle]}>
         <Text style={STYLES.text}>
-          {playerSelected === PLAYER_ONE ? 'x'
-            : playerSelected === PLAYER_TWO ? 'o'
+          {selectedByPlayer === PLAYER_ONE ? 'x'
+            : selectedByPlayer === PLAYER_TWO ? 'o'
             : ''}
           </Text>
       </View>

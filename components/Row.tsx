@@ -7,16 +7,17 @@ import Tile from './Tile';
 
 type RowProps = {
   rowIndex: integer,
+  rowMap: Map<number, Map<number, number[]>>,
   onTileSelected: (coordinate: TileCoordinate) => void,
-  currentPlayer: integer,
 }
 
-function Row({ rowIndex, onTileSelected, currentPlayer} : RowProps): React.JSX.Element {
+function Row({ rowIndex, rowMap, onTileSelected } : RowProps): React.JSX.Element {
+
   return (
     <View style={STYLES.row}>
-      <Tile coordinate={{row: rowIndex, column: 0}} onTileSelected={onTileSelected} currentPlayer={currentPlayer} />
-      <Tile coordinate={{row: rowIndex, column: 1}} onTileSelected={onTileSelected} currentPlayer={currentPlayer} />
-      <Tile coordinate={{row: rowIndex, column: 2}} onTileSelected={onTileSelected} currentPlayer={currentPlayer} />
+      <Tile coordinate={{row: rowIndex, column: 0}} rowMap={rowMap} onTileSelected={onTileSelected} />
+      <Tile coordinate={{row: rowIndex, column: 1}} rowMap={rowMap} onTileSelected={onTileSelected} />
+      <Tile coordinate={{row: rowIndex, column: 2}} rowMap={rowMap} onTileSelected={onTileSelected} />
     </View>
   );
 }

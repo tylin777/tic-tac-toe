@@ -8,6 +8,10 @@ const STYLES = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
   },
+  gameTable: {
+    flex: 1,
+    flexDirection: 'column',
+  },
   row: {
     flexDirection: 'row',
   },

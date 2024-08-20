@@ -1,26 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 
-import { PLAYER_ONE, PLAYER_TWO } from '../constants/Constants';
 import { STYLES } from '../constants/Styles';
+import { TileCoordinate } from '../models/TileCoordinate';
 import Row from './Row';
 
-function Board(): React.JSX.Element {
-  const [currentPlayer, setCurrentPlayer] = useState(PLAYER_ONE);
+type BoardProps = {
+  rowMap: Map<number, Map<number, number[]>>,
+  onTileSelected: (coordinate: TileCoordinate) => void,
+}
 
-  const toggleTurn = () => {
-    if (currentPlayer === PLAYER_ONE) {
-      setCurrentPlayer(PLAYER_TWO);
-    } else {
-      setCurrentPlayer(PLAYER_ONE);
-    }
-  }
-
+function Board({ rowMap, onTileSelected } : BoardProps): React.JSX.Element {
   return (
     <View style={STYLES.board}>
-      <Row rowIndex={0} onTileSelected={toggleTurn} currentPlayer={currentPlayer} />
-      <Row rowIndex={1} onTileSelected={toggleTurn} currentPlayer={currentPlayer} />
-      <Row rowIndex={2} onTileSelected={toggleTurn} currentPlayer={currentPlayer} />
+      <Row rowIndex={0} rowMap={rowMap} onTileSelected={onTileSelected} />
+      <Row rowIndex={1} rowMap={rowMap} onTileSelected={onTileSelected} />
+      <Row rowIndex={2} rowMap={rowMap} onTileSelected={onTileSelected} />
     </View>
   );
 }
