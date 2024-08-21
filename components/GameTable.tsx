@@ -65,7 +65,7 @@ function GameTable(): React.JSX.Element {
   }
 
   const onTileSelected = (coordinate: TileCoordinate) => {
-    if (!coordinatesMap.has(coordinate)) {
+    if (!coordinatesMap.has(coordinateToString(coordinate))) {
       setLastMove(coordinate);
 
       setCoordinatesMap(previousMap => {
