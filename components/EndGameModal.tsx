@@ -37,11 +37,9 @@ function EndGameModal({ winningPlayer, onReset } : EndGameModalProps): React.JSX
 
 const styles = StyleSheet.create({
   centeredView: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 24,
-    zIndex: 1,
   },
   modalView: {
     margin: 24,
@@ -49,6 +47,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 32,
     alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
