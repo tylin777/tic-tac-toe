@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   TouchableNativeFeedback,
@@ -8,21 +8,26 @@ import {
 import { COLORS } from '../constants/Colors';
 import { PLAYER_ONE, PLAYER_TWO, UNSELECTED } from '../constants/Constants';
 import { STYLES } from '../constants/Styles';
-import { TileCoordinate } from '../models/TileCoordinate';
+import { coordinateToString, TileCoordinate } from '../models/TileCoordinate';
 
 type TileProps = {
   coordinate: TileCoordinate,
-  rowMap: Map<number, Map<number, number[]>>,
+  coordinatesMap: Map<TileCoordinate, number>,
   onTileSelected: (coordinate: TileCoordinate) => void,
 }
 
-function Tile({ coordinate, rowMap, onTileSelected } : TileProps): React.JSX.Element {
-  let selectedByPlayer = UNSELECTED;
-  if (rowMap.has(coordinate.row)) {
-    if ((rowMap.get(coordinate.row)).has(coordinate.column)) {
-      selectedByPlayer = (rowMap.get(coordinate.row)).get(coordinate.column);
+function Tile({ coordinate, coordinatesMap, onTileSelected } : TileProps): React.JSX.Element {
+  const [selectedByPlayer, setSelectedByPlayer] = useState(UNSELECTED);
+
+  useEffect(() => {
+    const coordinateKey = coordinateToString(coordinate);
+
+    if (coordinatesMap.has(coordinateKey)) {
+      setSelectedByPlayer(coordinatesMap.get(coordinateKey));
+    } else {
+      setSelectedByPlayer(UNSELECTED);
     }
-  }
+  }, [coordinatesMap]);
 
   const backgroundStyle = {
     backgroundColor: selectedByPlayer === PLAYER_ONE ? COLORS.boldRed

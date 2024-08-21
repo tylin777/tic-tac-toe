@@ -3,4 +3,7 @@ interface TileCoordinate {
   column: number;
 }
 
-export TileCoordinate;
+const coordinateToString = (coordinate: TileCoordinate) => `${coordinate.row},${coordinate.column}`;
+
+export { coordinateToString };
+export { TileCoordinate };

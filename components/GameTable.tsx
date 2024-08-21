@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { COLORS } from '../constants/Colors';
 import { PLAYER_ONE, PLAYER_TWO, UNSELECTED } from '../constants/Constants';
 import { STYLES } from '../constants/Styles';
+import { coordinateToString, TileCoordinate } from '../models/TileCoordinate';
 import Board from './Board';
 import EndGameModal from './EndGameModal';
 
@@ -11,7 +12,9 @@ function GameTable(): React.JSX.Element {
   const [currentPlayer, setCurrentPlayer] = useState(PLAYER_ONE);
   const [winningPlayer, setWinningPlayer] = useState(UNSELECTED);
 
-  const [rowMap, setRowMap] = useState<Map<number, Map<number, number[]>>>(new Map());
+  const [lastMove, setLastMove] = useState<TileCoordinate | null>(null);
+
+  const [coordinatesMap, setCoordinatesMap] = useState<Map<TileCoordinate, number>>(new Map());
 
   const toggleTurn = () => {
     if (currentPlayer === PLAYER_ONE) {
@@ -21,48 +24,76 @@ function GameTable(): React.JSX.Element {
     }
   }
 
-  const checkIsWinningMove = (threeInARow: IterableIterator<number>) => {
-    let sum = 0;
-        for (const playerValue of threeInARow) {
-          sum += playerValue;
-        }
-
-    for (playerValue in threeInARow) {
-      console.log("TYLOG: checkIsWinningMove. playerValue " + playerValue);
-      sum += value;
+  const checkIsWinningMove = (coordinate: TileCoordinate) => {
+    // check 3 in a row
+    let rowSum = 0;
+    for (let j = 0; j < 3; j++) {
+      rowSum += coordinatesMap.get(coordinateToString({row: coordinate.row, column: j}));
+      if (Math.abs(rowSum) === 3) {
+        return true;
+      }
     }
 
-    return Math.abs(sum) === 3;
+    // check 3 in a column
+    let columnSum = 0;
+    for (let i = 0; i < 3; i++) {
+      columnSum += coordinatesMap.get(coordinateToString({row: i, column: coordinate.column}));
+      if (Math.abs(columnSum) === 3) {
+        return true;
+      }
+    }
+
+    // check back diagonal '\'
+    let backDiagonalSum = 0;
+    for (let b = 0; b < 3; b++) {
+      backDiagonalSum += coordinatesMap.get(coordinateToString({row: b, column: b}));
+      if (Math.abs(backDiagonalSum) === 3) {
+        return true;
+      }
+    }
+
+    // check forward diagonal '/'
+    let forwardDiagonalSum = 0;
+    for (let f = 0; f < 3; f++) {
+      forwardDiagonalSum += coordinatesMap.get(coordinateToString({row: 2 - f, column: f}));
+      if (Math.abs(forwardDiagonalSum) === 3) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   const onTileSelected = (coordinate: TileCoordinate) => {
-    if (!rowMap.has(coordinate.row)) {
-      rowMap.set(coordinate.row, new Map<number, number[]>());
+    if (!coordinatesMap.has(coordinate)) {
+      setLastMove(coordinate);
+
+      setCoordinatesMap(previousMap => {
+        const updatedMap = new Map(previousMap);
+        updatedMap.set(coordinateToString(coordinate), currentPlayer);
+        return updatedMap;
+      });
     }
+  }
 
-    const row = rowMap.get(coordinate.row);
-
-    if (!row.has(coordinate.column)) {
-      row.set(coordinate.column, currentPlayer);
-
-      const isWinningMove = checkIsWinningMove(row.values());
+  useEffect(() => {
+    if (lastMove) {
+      const isWinningMove = checkIsWinningMove(lastMove);
       if (isWinningMove) {
         setWinningPlayer(currentPlayer);
-      }
-
-      setRowMap(rowMap);
-
-      if (!isWinningMove) {
+      } else {
         toggleTurn();
       }
     }
-  }
+  }, [coordinatesMap, lastMove]);
 
   const onReset = () => {
     setCurrentPlayer(PLAYER_ONE);
     setWinningPlayer(UNSELECTED);
 
-    setRowMap(new Map());
+    setLastMove(null);
+
+    setCoordinatesMap(new Map());
   }
 
   const backgroundStyle = {
@@ -75,9 +106,9 @@ function GameTable(): React.JSX.Element {
     <View style={[STYLES.gameTable, backgroundStyle]}>
       <EndGameModal winningPlayer={winningPlayer} onReset={onReset} />
       <Text>Player 1</Text>
-      <Board rowMap={rowMap} onTileSelected={currentPlayer === PLAYER_ONE ? onTileSelected : () => {}} />
+      <Board coordinatesMap={coordinatesMap} onTileSelected={currentPlayer === PLAYER_ONE ? onTileSelected : () => {}} />
       <Text>Player 2</Text>
-      <Board rowMap={rowMap} onTileSelected={currentPlayer === PLAYER_TWO ? onTileSelected : () => {}} />
+      <Board coordinatesMap={coordinatesMap} onTileSelected={currentPlayer === PLAYER_TWO ? onTileSelected : () => {}} />
     </View>
   );
 }

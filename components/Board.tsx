@@ -6,16 +6,16 @@ import { TileCoordinate } from '../models/TileCoordinate';
 import Row from './Row';
 
 type BoardProps = {
-  rowMap: Map<number, Map<number, number[]>>,
+  coordinatesMap: Map<TileCoordinate, number>,
   onTileSelected: (coordinate: TileCoordinate) => void,
 }
 
-function Board({ rowMap, onTileSelected } : BoardProps): React.JSX.Element {
+function Board({ coordinatesMap, onTileSelected } : BoardProps): React.JSX.Element {
   return (
     <View style={STYLES.board}>
-      <Row rowIndex={0} rowMap={rowMap} onTileSelected={onTileSelected} />
-      <Row rowIndex={1} rowMap={rowMap} onTileSelected={onTileSelected} />
-      <Row rowIndex={2} rowMap={rowMap} onTileSelected={onTileSelected} />
+      <Row rowIndex={0} coordinatesMap={coordinatesMap} onTileSelected={onTileSelected} />
+      <Row rowIndex={1} coordinatesMap={coordinatesMap} onTileSelected={onTileSelected} />
+      <Row rowIndex={2} coordinatesMap={coordinatesMap} onTileSelected={onTileSelected} />
     </View>
   );
 }
